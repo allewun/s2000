@@ -45,7 +45,7 @@ link = 'http://www.s2ki.com/s2000/topic/903878-how-much-did-you-pay-for-your-use
     published = post.search('abbr.published').attribute('title').text
     author    = post.search('span.author.vcard > a').text
     location  = post.search('.//li[span[@class="ft"]/text() = "Location:"]/span[@class="fc"]').text
-    content   = post.search('div.entry-content').text.gsub(/^\s+|\s+$/, '')
+    content   = post.search('div.entry-content').xpath('text()').text.strip.gsub(/\s+/, ' ')
 
     db.execute("INSERT INTO forum (username, published, location, content)
                 VALUES (?, ?, ?, ?)", [author, published, location, content])
