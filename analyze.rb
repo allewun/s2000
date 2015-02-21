@@ -22,8 +22,8 @@ def determine_price content
 end
 
 def determine_miles content
-  /\b([\d,\.x]{1,7}k?)\s*(?:mi|mile|miles) |
-   (?:miles?|mileage)\s*\:?\s*([\d,\.x]{1,7}k?)\b
+  /\b(\d[\d,\.x]{1,6}k?)\s*(?:mi|mile|miles) |
+   (?:miles?|mileage)\s*\:?\s*(\d[\d,\.x]{1,6}k?)\b
   /ix.match(content).captures.compact[0] rescue nil
 end
 
