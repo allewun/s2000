@@ -2,6 +2,15 @@ require 'colorize'
 require 'sqlite3'
 
 
+def determine_year content
+  /\b((my)?(20)?0\d)\b/i.match(content)[1] rescue nil
+end
+
+def determine_price content
+  /(\$\s*[\d,\.]{0,6}k?)\b |
+   (?:price|cost|paid)\s*\:?\s*\$?\s*([\d,\.]{0,6}k?)\b
+  /ix.match(content).captures.compact[0] rescue nil
+end
 
 def parse_content content
   # objective: get
@@ -15,17 +24,37 @@ def parse_content content
   #   notes
 
   year = nil
-  # match years
+  mileage = nil
+  price = nil
+  color = nil
+
+  # determine year
   #   can be double digit (00-09)
   #   or 4 digits (2000-2009)
   #   and optionally preceded by "MY" (model year)
   #   ignore 1999
-  content.sub(/\b((my)?(20)?0\d)\b/i) { year = $1 }
+
+  year = determine_year content
+  content.sub!(year, '') if year
+
+  # determine price
+  #   look for full number,
+  #   or number followed by k
+  #   look for word "price"
+  #
+  price = determine_price content
+  # content.sub!(price, '') if price
 
   if year
-    p year
+    print "#{year.cyan} "
+    if price
+      print "#{price.green} "
+      puts content
+    else
+      puts content.yellow
+    end
   else
-    p content
+    puts content.yellow
   end
 
 end
@@ -48,7 +77,7 @@ rows = db.execute('SELECT * FROM forum')
 # filter entire rows out
 rows.reject! do |*, content|
   should_reject = not_enough_numbers(content) || too_many_questions(content)
-  puts "Filtered: #{content}".red if should_reject
+  #puts "Filtered: #{content}".red if should_reject
   should_reject
 end
 
