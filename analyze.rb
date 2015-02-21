@@ -15,9 +15,11 @@ def parse_content content
   #   notes
 
   year = nil
-  # match years, can be double digit (00-09)
-  #              or 4 digits (2000-2009)
-  #              and optionally preceded by "MY" (model year)
+  # match years
+  #   can be double digit (00-09)
+  #   or 4 digits (2000-2009)
+  #   and optionally preceded by "MY" (model year)
+  #   ignore 1999
   content.sub(/\b((my)?(20)?0\d)\b/i) { year = $1 }
 
   if year
@@ -35,7 +37,7 @@ def not_enough_numbers content
 end
 
 def too_many_questions content
-  content.scan('? ').count > 1
+  content.scan(/\? |\?$/).count > 1
 end
 
 
