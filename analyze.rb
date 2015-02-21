@@ -3,14 +3,33 @@ require 'sqlite3'
 
 
 def determine_year content
+  # can be double digit (00-09)
+  # or 4 digits (2000-2009)
+  # and optionally preceded by "MY" (model year)
+  # ignore 1999
+
   /\b((my)?(20)?0\d)\b/i.match(content)[1] rescue nil
 end
 
 def determine_price content
-  /(\$\s*[\d,\.]{0,6}k?)\b |
-   (?:price|cost|paid)\s*\:?\s*\$?\s*([\d,\.]{0,6}k?)\b
+  # look for full number,
+  # or number followed by k
+  # look for key words
+
+  /(\$\s*[\d,\.]{1,6}k?)\b |
+   (?:price|cost|paid)\s*\:?\s*\$?\s*([\d,\.]{1,6}k?)\b
   /ix.match(content).captures.compact[0] rescue nil
 end
+
+def determine_miles content
+  /\b([\d,\.x]{1,7}k?)\s*(?:mi|mile|miles) |
+   (?:miles?|mileage)\s*\:?\s*([\d,\.x]{1,7}k?)\b
+  /ix.match(content).captures.compact[0] rescue nil
+end
+
+$bad = 0
+$good = 0
+$filtered = 0
 
 def parse_content content
   # objective: get
@@ -23,40 +42,27 @@ def parse_content content
   #   color
   #   notes
 
-  year = nil
+  year    = nil
+  price   = nil
   mileage = nil
-  price = nil
-  color = nil
-
-  # determine year
-  #   can be double digit (00-09)
-  #   or 4 digits (2000-2009)
-  #   and optionally preceded by "MY" (model year)
-  #   ignore 1999
+  color   = nil
 
   year = determine_year content
   content.sub!(year, '') if year
 
-  # determine price
-  #   look for full number,
-  #   or number followed by k
-  #   look for word "price"
-  #
   price = determine_price content
-  # content.sub!(price, '') if price
+  content.sub!(price, '') if price
 
-  if year
-    print "#{year.cyan} "
-    if price
-      print "#{price.green} "
-      puts content
-    else
-      puts content.yellow
-    end
+  mileage = determine_miles content
+  content.sub!(mileage, '') if mileage
+
+  if year && price && mileage
+    puts "#{year.cyan} #{price.green} #{mileage.magenta}"
+    $good += 1
   else
-    puts content.yellow
+    # puts content.yellow
+    $bad += 1
   end
-
 end
 
 # filters
@@ -69,30 +75,36 @@ def too_many_questions content
   content.scan(/\? |\?$/).count > 1
 end
 
+def is_trade content
+  content.include? 'trade'
+end
+
 
 db = SQLite3::Database.new 's2ki.db'
-
 rows = db.execute('SELECT * FROM forum')
 
 # filter entire rows out
 rows.reject! do |*, content|
-  should_reject = not_enough_numbers(content) || too_many_questions(content)
-  #puts "Filtered: #{content}".red if should_reject
+  should_reject = not_enough_numbers(content) || too_many_questions(content) || is_trade(content)
+  $filtered += 1 if should_reject
+
   should_reject
 end
 
-# # cleanup content, remove noise
+# cleanup content, remove noise
 rows.map! do |*_, content|
-  if content.match(/s2000|s2k/i)
-    content.gsub!(/s2000|s2k/i, '')
-  end
+  content.gsub!(/s2000|s2k/i, '')
 
   [*_, content]
 end
 
+# extract data from rows
 rows.each do |row|
   username, published, location, content = row
 
-  parse_content content if content
+  parse_content content
 end
 
+
+puts "Filtered #{$filtered} rows"
+puts "#{$good} / #{$good + $bad} parseable rows"
