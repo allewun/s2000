@@ -91,6 +91,25 @@ end
 
 # postprocessing
 
+def process_number number
+  number.sub!(/[\.,]$/, '')
+
+  # non-american decimal
+  number.sub!(/,(\d)$/, '.\1')
+
+  # remove commas
+  number.sub!(',', '')
+
+  # multiply by 1000
+  if number.match(/k/i)
+    number.sub!(/k/i, '')
+    number = number.to_f
+    number *= 1000
+  end
+
+  number = number.to_f
+end
+
 def postprocess_year year
   year.sub!(/my/i, '')
   year.sub!(/^(\d{2})$/, '20\1')
@@ -100,22 +119,8 @@ end
 def postprocess_price price
   price.sub!('$', '')
   price.strip!
-  price.sub!(/[\.,]$/, '')
 
-  # non-american decimal
-  price.sub!(/,(\d)$/, '.\1')
-
-  # remove commas
-  price.sub!(',', '')
-
-  # multiply by 1000
-  if price.match(/k/i)
-    price.sub!(/k/i, '')
-    price = price.to_f
-    price *= 1000
-  end
-
-  price = price.to_f
+  price = process_number price
 
   # assume missed multiplier
   if price < 35
@@ -125,6 +130,13 @@ def postprocess_price price
   end
 
   price.to_i
+end
+
+def postprocess_mileage mileage
+  mileage.gsub!(/x/i, '0')
+  mileage = process_number mileage
+
+  mileage.to_i
 end
 
 db = SQLite3::Database.new 's2ki.db'
@@ -158,9 +170,9 @@ rows.each do |row|
 
   year = postprocess_year year
   price = postprocess_price price
-  # mileage = postprocess_mileage mileage
+  mileage = postprocess_mileage mileage
 
-  puts "#{year.to_s.cyan} #{price.to_s.green}"
+  puts "#{year.to_s.cyan} #{price.to_s.green} #{mileage.to_s.red}"
 end
 
 
