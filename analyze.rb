@@ -1,9 +1,9 @@
 require 'colorize'
 require 'sqlite3'
 
-require './helpers/extract.rb'
-require './helpers/filter.rb'
-require './helpers/postprocess.rb'
+require_relative 'helpers/extract.rb'
+require_relative 'helpers/filter.rb'
+require_relative 'helpers/postprocess.rb'
 
 $bad = 0
 $good = 0
@@ -33,6 +33,7 @@ rows.map! do |*_, content|
 end
 
 # extract data from rows
+puts "YEAR".cyan + "\t" + "PRICE".green + "\t" + "MILEAGE".red
 rows.each do |row|
   username, published, location, content = row
 
