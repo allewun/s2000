@@ -1,15 +1,15 @@
 require 'colorize'
 require 'sqlite3'
 
-require_relative 'helpers/extract.rb'
 require_relative 'helpers/filter.rb'
+require_relative 'helpers/match.rb'
 require_relative 'helpers/postprocess.rb'
 
 $bad = 0
 $good = 0
 $filtered = 0
 
-def analyze
+def extract
   db = SQLite3::Database.new DATABASE_FILE
   rows = db.execute('SELECT * FROM forum')
 
@@ -37,7 +37,7 @@ def analyze
   rows.each do |row|
     username, published, location, content = row
 
-    year, price, mileage = extract_content(content)
+    year, price, mileage = match_content(content)
     next unless (year && price && mileage)
 
     year    = postprocess_year year

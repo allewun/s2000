@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'colorize'
-require_relative 'analyze.rb'
+require_relative 'extract.rb'
 require_relative 'scrape.rb'
 
 
@@ -33,5 +33,5 @@ if File.exist?(DATABASE_FILE)
 end
 
 # analyze
-puts "Analyzing..."
-analyze
+puts "Extracting data..."
+extract
