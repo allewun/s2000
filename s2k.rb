@@ -2,6 +2,7 @@
 
 require 'colorize'
 require_relative 'extract.rb'
+require_relative 'plot.rb'
 require_relative 'scrape.rb'
 
 
@@ -27,11 +28,39 @@ if File.exist?(DATABASE_FILE)
     SQL
 
     # scrape
+    puts
     puts "Scraping..."
     scrape
   end
 end
 
-# analyze
+# extract
+puts
 puts "Extracting data..."
-extract
+years, prices, mileages = extract
+
+# analyze
+puts
+puts "Generating plots..."
+prices_vs_years =
+  Plot.new({x: years,
+            x_title: 'Years',
+            x_ticks: (2000..2009).to_a,
+            x_format: '"####"',
+            y: prices,
+            y_title: 'Price',
+            y_format: '"$##,###"',
+            y_ticks: (0..35000).step(5000).to_a})
+
+prices_vs_mileage =
+  Plot.new({x: mileages,
+            x_title: 'Mileage',
+            x_format: '"###,###"',
+            x_ticks: (0..200000).step(10000).to_a,
+            y: prices,
+            y_title: 'Price',
+            y_format: '"$##,###"',
+            y_ticks: (0..35000).step(5000).to_a})
+
+prices_vs_years.save
+prices_vs_mileage.save

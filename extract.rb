@@ -9,9 +9,14 @@ $bad = 0
 $good = 0
 $filtered = 0
 
+# [years, prices, mileages]
 def extract
   db = SQLite3::Database.new DATABASE_FILE
   rows = db.execute('SELECT * FROM forum')
+
+  years = []
+  prices = []
+  mileages = []
 
   # filter entire rows out
   rows.reject! do |*, content|
@@ -44,10 +49,17 @@ def extract
     price   = postprocess_price price
     mileage = postprocess_mileage mileage
 
+    years << year
+    prices << price
+    mileages << mileage
+
     puts "#{year.to_s.cyan}\t#{price.to_s.green}\t#{mileage.to_s.red}"
   end
 
 
   puts "Filtered #{$filtered} rows"
   puts "#{$good} / #{$good + $bad} parseable rows"
+
+
+  [years, prices, mileages]
 end
