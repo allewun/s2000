@@ -84,7 +84,7 @@ def is_trade content
 end
 
 def is_international content
-  content.include?('canada') ||
+  content.match(/canada/i) ||
   content.include?('£')
 end
 
@@ -94,9 +94,38 @@ end
 def postprocess_year year
   year.sub!(/my/i, '')
   year.sub!(/^(\d{2})$/, '20\1')
-  year
+  year.to_i
 end
 
+def postprocess_price price
+  price.sub!('$', '')
+  price.strip!
+  price.sub!(/[\.,]$/, '')
+
+  # non-american decimal
+  price.sub!(/,(\d)$/, '.\1')
+
+  # remove commas
+  price.sub!(',', '')
+
+  # multiply by 1000
+  if price.match(/k/i)
+    price.sub!(/k/i, '')
+    price = price.to_f
+    price *= 1000
+  end
+
+  price = price.to_f
+
+  # assume missed multiplier
+  if price < 35
+    price *= 1000
+  elsif price < 350
+    price *= 100
+  end
+
+  price.to_i
+end
 
 db = SQLite3::Database.new 's2ki.db'
 rows = db.execute('SELECT * FROM forum')
@@ -128,11 +157,12 @@ rows.each do |row|
   next unless (year && price && mileage)
 
   year = postprocess_year year
-  # price = postprocess_price price
+  price = postprocess_price price
   # mileage = postprocess_mileage mileage
 
-  puts "#{year.cyan}"
+  puts "#{year.to_s.cyan} #{price.to_s.green}"
 end
+
 
 
 puts "Filtered #{$filtered} rows"
