@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 require 'colorize'
 require 'sqlite3'
 
@@ -81,6 +83,11 @@ def is_trade content
   content.include? 'trade'
 end
 
+def is_international content
+  content.include?('canada') ||
+  content.include?('£')
+end
+
 
 # postprocessing
 
@@ -96,7 +103,11 @@ rows = db.execute('SELECT * FROM forum')
 
 # filter entire rows out
 rows.reject! do |*, content|
-  should_reject = not_enough_numbers(content) || too_many_questions(content) || is_trade(content)
+  should_reject = not_enough_numbers(content) ||
+                  too_many_questions(content) ||
+                  is_trade(content) ||
+                  is_international(content)
+
   $filtered += 1 if should_reject
 
   should_reject
