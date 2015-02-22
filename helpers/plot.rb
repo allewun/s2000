@@ -14,7 +14,7 @@ class Plot
     @y_min ||= @y.min
     @y_max ||= @y.max
 
-    @template = File.read('plot.html.erb')
+    @template = File.read('helpers/plot.html.erb')
     @data = construct_data
   end
 

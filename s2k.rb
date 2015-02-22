@@ -1,9 +1,9 @@
 #!/usr/bin/env ruby
 
 require 'colorize'
-require_relative 'extract.rb'
-require_relative 'plot.rb'
-require_relative 'scrape.rb'
+require_relative 'helpers/extract.rb'
+require_relative 'helpers/plot.rb'
+require_relative 'helpers/scrape.rb'
 
 
 DATABASE_FILE = 's2k.db'

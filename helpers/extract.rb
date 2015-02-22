@@ -1,9 +1,9 @@
 require 'colorize'
 require 'sqlite3'
 
-require_relative 'helpers/filter.rb'
-require_relative 'helpers/match.rb'
-require_relative 'helpers/postprocess.rb'
+require_relative 'filter.rb'
+require_relative 'match.rb'
+require_relative 'postprocess.rb'
 
 $bad = 0
 $good = 0
