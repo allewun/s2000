@@ -17,13 +17,19 @@ def process_number number
   number = number.to_f
 end
 
+
 def postprocess_year year
+  return nil if !year
+
   year.sub!(/my/i, '')
   year.sub!(/^(\d{2})$/, '20\1')
   year.to_i
 end
 
+
 def postprocess_price price
+  return nil if !price
+
   price.sub!('$', '')
   price.strip!
 
@@ -39,14 +45,23 @@ def postprocess_price price
   price.to_i
 end
 
+
 def postprocess_mileage mileage
+  return nil if !mileage
+
   mileage.gsub!(/x/i, '0')
   mileage = process_number mileage
 
   # assume missed multiplier
-  if mileage < 100
-    mileage *= 1000
-  end
+  mileage *= 1000 if mileage < 100
 
   mileage.to_i
+end
+
+
+def postprocess datum
+  datum[:year]    = postprocess_year datum[:year]
+  datum[:price]   = postprocess_price datum[:price]
+  datum[:mileage] = postprocess_mileage datum[:mileage]
+  datum
 end

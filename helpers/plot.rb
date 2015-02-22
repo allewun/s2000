@@ -33,6 +33,9 @@ class Plot
       f.write(render)
     end
 
-    puts "  #{@y_title} vs. #{@x_title}: #{file}"
+    puts "  #{@y_title} vs. #{@x_title}"
+    puts "    #{@x.count} records"
+    puts "    #{file}"
+    puts
   end
 end
