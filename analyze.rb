@@ -31,11 +31,9 @@ $bad = 0
 $good = 0
 $filtered = 0
 
+# [year, price, mileage]
 def parse_content content
   # objective: get
-  #   year
-  #   mileage
-  #   price
   #   purchase date
   #   location
   #   CR?
@@ -47,6 +45,8 @@ def parse_content content
   mileage = nil
   color   = nil
 
+  # puts content.black
+
   year = determine_year content
   content.sub!(year, '') if year
 
@@ -57,11 +57,13 @@ def parse_content content
   content.sub!(mileage, '') if mileage
 
   if year && price && mileage
-    puts "#{year.cyan} #{price.green} #{mileage.magenta}"
+    # puts "#{year.cyan} #{price.green} #{mileage.magenta}"
     $good += 1
+    [year, price, mileage]
   else
     # puts content.yellow
     $bad += 1
+    nil
   end
 end
 
@@ -77,6 +79,15 @@ end
 
 def is_trade content
   content.include? 'trade'
+end
+
+
+# postprocessing
+
+def postprocess_year year
+  year.sub!(/my/i, '')
+  year.sub!(/^(\d{2})$/, '20\1')
+  year
 end
 
 
@@ -102,7 +113,14 @@ end
 rows.each do |row|
   username, published, location, content = row
 
-  parse_content content
+  year, price, mileage = parse_content(content)
+  next unless (year && price && mileage)
+
+  year = postprocess_year year
+  # price = postprocess_price price
+  # mileage = postprocess_mileage mileage
+
+  puts "#{year.cyan}"
 end
 
 
