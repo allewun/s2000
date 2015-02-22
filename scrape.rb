@@ -1,55 +1,28 @@
 require 'mechanize'
 require 'sqlite3'
 
-puts "Starting S2000 data collection...\n"
+def scrape
+  db = SQLite3::Database.new DATABASE_FILE
+  m = Mechanize.new
 
-# setup database
-puts "Setting up database...\n"
-db = SQLite3::Database.new 's2ki.db'
+  link = FORUM_URL
 
-db.execute <<-SQL
-  CREATE TABLE forum (
-    username  TEXT,
-    published TEXT,
-    location  TEXT,
-    content   TEXT
-  );
+  (1..10000).each do |i|
+    puts "Fetching page #{i}...\n"
+    page = m.get(link)
+    link = page.search('li.next > a[title="Next page"]').attribute("href").text rescue nil
 
-  CREATE TABLE s2000 (
-    year     INTEGER,
-    mileage  INTEGER,
-    price    INTEGER,
-    purchase TEXT,
-    location TEXT,
-    cr       INTEGER,
-    color    TEXT,
-    notes    TEXT,
-    username TEXT
-  );
-SQL
+    # get posts that don't contain quotes
+    page.search('.//div[contains(@id, "post_id_")]/div[@class="post_wrap"][not(descendant::div[@class="quote"])]').each do |post|
+      published = post.search('abbr.published').attribute('title').text
+      author    = post.search('span.author.vcard > a').text
+      location  = post.search('.//li[span[@class="ft"]/text() = "Location:"]/span[@class="fc"]').text
+      content   = post.search('div.entry-content').xpath('text()').text.strip.gsub(/\s+/, ' ')
 
+      db.execute("INSERT INTO forum (username, published, location, content)
+                  VALUES (?, ?, ?, ?)", [author, published, location, content])
+    end
 
-# begin scraping
-puts "Beginning to scrape...\n"
-m = Mechanize.new
-
-link = 'http://www.s2ki.com/s2000/topic/903878-how-much-did-you-pay-for-your-used-s2000/'
-
-(1..10000).each do |i|
-  puts "Fetching page #{i}...\n"
-  page = m.get(link)
-  link = page.search('li.next > a[title="Next page"]').attribute("href").text rescue nil
-
-  # get posts that don't contain quotes
-  page.search('.//div[contains(@id, "post_id_")]/div[@class="post_wrap"][not(descendant::div[@class="quote"])]').each do |post|
-    published = post.search('abbr.published').attribute('title').text
-    author    = post.search('span.author.vcard > a').text
-    location  = post.search('.//li[span[@class="ft"]/text() = "Location:"]/span[@class="fc"]').text
-    content   = post.search('div.entry-content').xpath('text()').text.strip.gsub(/\s+/, ' ')
-
-    db.execute("INSERT INTO forum (username, published, location, content)
-                VALUES (?, ?, ?, ?)", [author, published, location, content])
+    break unless link
   end
-
-  break unless link
 end
