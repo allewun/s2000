@@ -8,7 +8,7 @@ def scrape
   link = FORUM_URL
 
   (1..10000).each do |i|
-    puts "Fetching page #{i}...\n"
+    puts "  Fetching page #{i}...\n"
     page = m.get(link)
     link = page.search('li.next > a[title="Next page"]').attribute("href").text rescue nil
 
