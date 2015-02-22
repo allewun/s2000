@@ -1,4 +1,4 @@
-def extract_year content
+def match_year content
   # can be double digit (00-09)
   # or 4 digits (2000-2009)
   # and optionally preceded by "MY" (model year)
@@ -8,7 +8,7 @@ def extract_year content
 end
 
 
-def extract_price content
+def match_price content
   # look for full number,
   # or number followed by k
   # look for key words
@@ -19,7 +19,7 @@ def extract_price content
 end
 
 
-def extract_miles content
+def match_miles content
   /\b(\d[\d,\.x]{1,6}k?)\s*(?:mi|miles?|mileage) |
    (?:mi|miles?|mileage)\s*\:?\s*(\d[\d,\.x]{1,6}k?)\b
   /ix.match(content).captures.compact[0] rescue nil
@@ -27,7 +27,7 @@ end
 
 
 # [year, price, mileage]
-def extract_content content
+def match_content content
   # objective: get
   #   purchase date
   #   location
@@ -42,13 +42,13 @@ def extract_content content
 
   # puts content.black
 
-  year = extract_year content
+  year = match_year content
   content.sub!(year, '') if year
 
-  price = extract_price content
+  price = match_price content
   content.sub!(price, '') if price
 
-  mileage = extract_miles content
+  mileage = match_miles content
   content.sub!(mileage, '') if mileage
 
   if year && price && mileage
