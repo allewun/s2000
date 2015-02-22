@@ -17,10 +17,14 @@ def scrape
       published = post.search('abbr.published').attribute('title').text
       author    = post.search('span.author.vcard > a').text
       location  = post.search('.//li[span[@class="ft"]/text() = "Location:"]/span[@class="fc"]').text
-      content   = post.search('div.entry-content').xpath('text()').text.strip.gsub(/\s+/, ' ')
+      content   = post.search('div.entry-content').xpath('descendant::text()[not(parent::p/@class="edit")]').text.strip.gsub(/\s+/, ' ')
 
-      db.execute("INSERT INTO forum (username, published, location, content)
-                  VALUES (?, ?, ?, ?)", [author, published, location, content])
+      begin
+        db.execute("INSERT INTO forum (username, published, location, content)
+                    VALUES (?, ?, ?, ?)", [author, published, location, content])
+      rescue SQLite3::ConstraintException => e
+        # don't insert duplicate
+      end
     end
 
     break unless link

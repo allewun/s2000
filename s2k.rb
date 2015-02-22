@@ -22,7 +22,7 @@ if File.exist?(DATABASE_FILE)
         username  TEXT,
         published TEXT,
         location  TEXT,
-        content   TEXT
+        content   TEXT UNIQUE
       );
     SQL
 
