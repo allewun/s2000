@@ -28,7 +28,7 @@ class Plot
   end
 
   def save
-    file = "plots/#{@x_title}-#{@y_title}.html"
+    file = "plots/#{@x_title}-vs-#{@y_title}.html"
     File.open(file, "w+") do |f|
       f.write(render)
     end
