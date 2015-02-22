@@ -30,3 +30,17 @@ def scrape
     break unless link
   end
 end
+
+
+def setup_db
+  File.delete DATABASE_FILE if File.exist? DATABASE_FILE
+  db = SQLite3::Database.new DATABASE_FILE
+  db.execute <<-SQL
+    CREATE TABLE forum (
+      username  TEXT,
+      published TEXT,
+      location  TEXT,
+      content   TEXT UNIQUE
+    );
+  SQL
+end

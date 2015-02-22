@@ -15,6 +15,19 @@ def get_data_xy(data, x_key, y_key)
 end
 
 
+def save_data data
+  string = "YEAR\tPRICE\tMILEAGE\n"
+  data.each do |hash|
+    string << "#{hash[:year]}\t#{hash[:price]}\t#{hash[:mileage]}\n"
+  end
+
+  file = "#{RESULTS_DIR}/s2k.txt"
+  File.open(file, "w+") { |f| f.write string }
+
+  puts "Data saved to #{file}"
+end
+
+
 def analyze data
   data_price_year    = get_data_xy(data, :year, :price)
   data_price_mileage = get_data_xy(data, :mileage, :price)
@@ -39,6 +52,6 @@ def analyze data
               y_format: '"$##,###"',
               y_ticks: (0..50000).step(5000).to_a})
 
-  prices_vs_years.save
-  prices_vs_mileage.save
+  prices_vs_years.plot
+  prices_vs_mileage.plot
 end

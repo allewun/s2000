@@ -27,8 +27,8 @@ class Plot
     ERB.new(@template).result(binding)
   end
 
-  def save
-    file = "plots/#{@x_title}-vs-#{@y_title}.html"
+  def plot
+    file = "#{RESULTS_DIR}/#{@x_title}-vs-#{@y_title}.html"
     File.open(file, "w+") do |f|
       f.write(render)
     end
