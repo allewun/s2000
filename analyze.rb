@@ -136,6 +136,11 @@ def postprocess_mileage mileage
   mileage.gsub!(/x/i, '0')
   mileage = process_number mileage
 
+  # assume missed multiplier
+  if mileage < 100
+    mileage *= 1000
+  end
+
   mileage.to_i
 end
 
