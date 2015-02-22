@@ -177,7 +177,8 @@ rows.each do |row|
   price = postprocess_price price
   mileage = postprocess_mileage mileage
 
-  puts "#{year.to_s.cyan} #{price.to_s.green} #{mileage.to_s.red}"
+
+  puts "#{year.to_s.cyan}\t#{price.to_s.green}\t#{mileage.to_s.red}"
 end
 
 
