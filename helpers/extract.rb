@@ -5,11 +5,9 @@ require_relative 'extractors.rb'
 require_relative 'filter.rb'
 require_relative 'postprocess.rb'
 
-$bad = 0
-$good = 0
 $filtered = 0
 
-# [{years, prices, mileages}]
+# [{years, prices, mileages, colors}]
 def extract
   db = SQLite3::Database.new DATABASE_FILE
   forum_rows = db.execute('SELECT * FROM forum')
@@ -41,7 +39,6 @@ def extract
   end
 
   puts "  Filtered #{$filtered} rows"
-  puts "  #{$good} / #{$good + $bad} complete rows"
 
   data
 end

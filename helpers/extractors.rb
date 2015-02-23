@@ -26,13 +26,24 @@ def extract_miles content
 end
 
 
+def extract_color content
+  /(white|platinum|gpw|grand prix|
+    silver|sebring|chicane|moonrock|
+    black|blk|berlina|
+    red|
+    yellow|rio|spa|
+    lime|green|
+    blue|mcb|navy|suzuka|apex|montecarlo|laguna|
+    orange)/xi.match(content).captures.compact[0] rescue nil
+end
+
+
 # {year, price, mileage}
 def extract_content content
   # objective: get
   #   purchase date
   #   location
   #   CR?
-  #   color
   #   notes
 
   # puts content.black
@@ -46,13 +57,11 @@ def extract_content content
   mileage = extract_miles content
   content.sub!(mileage, '') if mileage
 
-  if year && price && mileage
-    $good += 1
-  else
-    $bad += 1
-  end
+  color = extract_color content
+  content.sub!(color, '') if color
 
   {year:    year,
    price:   price,
-   mileage: mileage}
+   mileage: mileage,
+   color:   color}
 end

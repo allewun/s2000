@@ -11,7 +11,7 @@ def process_number number
   if number.match(/k/i)
     number.sub!(/k/i, '')
     number = number.to_f
-    number *= 1000
+    number *= 1000 if number < 1000
   end
 
   number = number.to_f
@@ -59,9 +59,34 @@ def postprocess_mileage mileage
 end
 
 
+def postprocess_color color
+  return nil if !color
+
+  case color
+  when /white|platinum|gpw|grand prix/
+    'white'
+  when /silver|sebring|chicane|moonrock/
+    'silver'
+  when /black|blk|berlina/
+    'black'
+  when /red/
+    'red'
+  when /yellow|rio|spa/
+    'yellow'
+  when /lime|green/
+    'green'
+  when /blue|mcb|navy|suzuka|apex|montecarlo|laguna/
+    'blue'
+  when /orange/
+    'orange'
+  end
+end
+
+
 def postprocess datum
   datum[:year]    = postprocess_year datum[:year]
   datum[:price]   = postprocess_price datum[:price]
   datum[:mileage] = postprocess_mileage datum[:mileage]
+  datum[:color]   = postprocess_color datum[:color]
   datum
 end

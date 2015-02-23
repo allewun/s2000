@@ -16,9 +16,9 @@ end
 
 
 def save_data data
-  string = "YEAR\tPRICE\tMILEAGE\n"
+  string = "YEAR\tPRICE\tMILEAGE\tCOLOR\n"
   data.each do |hash|
-    string << "#{hash[:year]}\t#{hash[:price]}\t#{hash[:mileage]}\n"
+    string << "#{hash[:year]}\t#{hash[:price]}\t#{hash[:mileage]}\t#{hash[:color]}\n"
   end
 
   file = "#{RESULTS_DIR}/s2k.txt"
