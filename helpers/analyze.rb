@@ -1,11 +1,17 @@
 require_relative 'plot.rb'
 
-def get_data_xy(data, x_key, y_key)
-  result = {x: [], y: []}
+def get_data_xy(data, x_key, y_key, z_key = nil)
+  result = {x: [], y: [], z_key => []}
 
   # only add x-y pairwise elements if neither are nil
   data.each do |hash|
-    if hash[x_key] && hash[y_key]
+    if z_key
+      if hash[x_key] && hash[y_key] && hash[z_key]
+        result[:x] << hash[x_key]
+        result[:y] << hash[y_key]
+        result[z_key] << hash[z_key]
+      end
+    elsif hash[x_key] && hash[y_key]
       result[:x] << hash[x_key]
       result[:y] << hash[y_key]
     end
@@ -41,7 +47,7 @@ def analyze data
   data_price_year    = get_data_xy(data, :year, :price)
   data_price_mileage = get_data_xy(data, :mileage, :price)
   data_price_color   = get_data_xy(data, :color, :price)
-  data_price_date    = get_data_xy(data, :date, :price)
+  data_price_date    = get_data_xy(data, :date, :price, :year)
 
   prices_vs_years =
     Plot.new({x: data_price_year[:x],
@@ -72,9 +78,11 @@ def analyze data
               y_format: '"$##,###"',
               y_ticks: (0..35000).step(5000).to_a})
 
+
   prices_vs_date =
-    Plot.new({x: data_price_date[:x],
-              x_title: 'Date',
+    Plot.new({x: data_price_date[:x].zip(data_price_date[:year]).map { |date,year| (date - Time.parse("#{year}-1-1")).to_f / (60*60*24*365) },
+              x_title: 'Age when purchased',
+              x_ticks: (0..15).to_a,
               y: data_price_date[:y],
               y_title: 'Price',
               y_format: '"$##,###"',

@@ -86,9 +86,43 @@ end
 def postprocess_date date
   return nil if !date
 
-  p date
+  year = nil,
+  month = nil
+  day = 1
 
-  return nil
+  month_names = %w(jan feb mar apr may jun jul aug sept oct nov dec)
+
+  case date
+  # british format
+  when /201\d(?:\/|\-)\d{1,2}(?:(?:\/|\-)\d{1,2})?/
+    parts = date.split(/\/|\-/).map(&:to_i)
+    if parts.count == 2
+      year, month = parts
+    elsif parts.count == 3
+      year, month, day = parts
+    end
+
+  # american format
+  when /(?:\d{1,2}(?:\/|\-))?\d{1,2}(?:\/|\-)201\d/
+    parts = date.split(/\/|\-/).map(&:to_i)
+    if parts.count == 2
+      month, year = parts
+    elsif parts.count == 3
+      # assume m/d/y first
+      month, day, year = parts
+
+      if month > 12
+        day, month, year = parts
+      end
+    end
+
+  # month year
+  when /jan|feb|mar|apr|may|jun|jul|aug|sept|oct|nov|dec/i
+    month = month_names.index { |m| date.downcase.include? m } + 1
+    year = date.gsub(/\D/, '').to_i
+  end
+
+  Time.parse("#{year}-#{month}-#{day}")
 end
 
 

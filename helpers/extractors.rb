@@ -34,7 +34,7 @@ def extract_color content
     yellow|rio|spa|
     lime|green|
     blue|mcb|navy|suzuka|apex|montecarlo|laguna|
-    orange)/xi.match(content).captures.compact[0] rescue nil
+    orange)/ix.match(content).captures.compact[0] rescue nil
 end
 
 
@@ -42,7 +42,7 @@ def extract_date content
   /\b(201\d(?:\/|\-)\d{1,2}(?:(?:\/|\-)\d{1,2})?)\b | # british format
    \b((?:\d{1,2}(?:\/|\-))?\d{1,2}(?:\/|\-)201\d)\b | # american format
    ((?:jan|feb|mar|apr|may|jun|jul|aug|sept|oct|nov|dec)[a-z]*\s*(?:(?:20)1\d))\b | # month year
-   \b((?:(?:20)1\d)\s*(?:jan|feb|mar|apr|may|jun|jul|aug|sept|oct|nov|dec)[a-z]*) | # year month
+   \b((?:(?:20)1\d)\s*(?:jan|feb|mar|apr|may|jun|jul|aug|sept|oct|nov|dec)[a-z]*)   # year month
   /ix.match(content).captures.compact[0] rescue nil
 end
 
