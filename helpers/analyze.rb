@@ -31,6 +31,7 @@ end
 def analyze data
   data_price_year    = get_data_xy(data, :year, :price)
   data_price_mileage = get_data_xy(data, :mileage, :price)
+  data_price_color   = get_data_xy(data, :color, :price)
 
   prices_vs_years =
     Plot.new({x: data_price_year[:x],
@@ -52,6 +53,16 @@ def analyze data
               y_format: '"$##,###"',
               y_ticks: (0..50000).step(5000).to_a})
 
+  prices_vs_color =
+    Plot.new({x: data_price_color[:x],
+              x_title: 'Color',
+              x_ticks: (0..7).to_a,
+              y: data_price_color[:y],
+              y_title: 'Price',
+              y_format: '"$##,###"',
+              y_ticks: (0..50000).step(5000).to_a})
+
   prices_vs_years.plot
   prices_vs_mileage.plot
+  prices_vs_color.plot
 end

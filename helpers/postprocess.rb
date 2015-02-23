@@ -64,21 +64,21 @@ def postprocess_color color
 
   case color
   when /white|platinum|gpw|grand prix/
-    'white'
+    0
   when /silver|sebring|chicane|moonrock/
-    'silver'
+    1
   when /black|blk|berlina/
-    'black'
+    2
   when /red/
-    'red'
+    3
   when /yellow|rio|spa/
-    'yellow'
+    4
   when /lime|green/
-    'green'
+    5
   when /blue|mcb|navy|suzuka|apex|montecarlo|laguna/
-    'blue'
+    6
   when /orange/
-    'orange'
+    7
   end
 end
 
