@@ -30,7 +30,7 @@ def extract_color content
   /(white|platinum|gpw|grand prix|
     silver|sebring|chicane|moonrock|
     black|blk|berlina|
-    red|
+    red|nfr
     yellow|rio|spa|
     lime|green|
     blue|mcb|navy|suzuka|apex|montecarlo|laguna|

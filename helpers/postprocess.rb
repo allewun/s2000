@@ -69,7 +69,7 @@ def postprocess_color color
     1
   when /black|blk|berlina/
     2
-  when /red/
+  when /red|nfr/
     3
   when /yellow|rio|spa/
     4
