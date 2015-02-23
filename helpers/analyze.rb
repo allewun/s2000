@@ -16,9 +16,18 @@ end
 
 
 def save_data data
-  string = "YEAR\tPRICE\tMILEAGE\tCOLOR\n"
+  string = ['YEAR',
+            'PRICE',
+            'MILEAGE',
+            'COLOR',
+            'DATE'].join("\t") + "\n"
+
   data.each do |hash|
-    string << "#{hash[:year]}\t#{hash[:price]}\t#{hash[:mileage]}\t#{hash[:color]}\n"
+    string << [hash[:year],
+               hash[:price],
+               hash[:mileage],
+               hash[:color],
+               hash[:date]].join("\t") + "\n"
   end
 
   file = "#{RESULTS_DIR}/s2k.txt"
@@ -32,6 +41,7 @@ def analyze data
   data_price_year    = get_data_xy(data, :year, :price)
   data_price_mileage = get_data_xy(data, :mileage, :price)
   data_price_color   = get_data_xy(data, :color, :price)
+  data_price_date    = get_data_xy(data, :date, :price)
 
   prices_vs_years =
     Plot.new({x: data_price_year[:x],
@@ -62,7 +72,16 @@ def analyze data
               y_format: '"$##,###"',
               y_ticks: (0..35000).step(5000).to_a})
 
+  prices_vs_date =
+    Plot.new({x: data_price_date[:x],
+              x_title: 'Date',
+              y: data_price_date[:y],
+              y_title: 'Price',
+              y_format: '"$##,###"',
+              y_ticks: (0..35000).step(5000).to_a})
+
   prices_vs_years.plot
   prices_vs_mileage.plot
   prices_vs_color.plot
+  prices_vs_date.plot
 end

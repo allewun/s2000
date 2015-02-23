@@ -7,7 +7,7 @@ require_relative 'postprocess.rb'
 
 $filtered = 0
 
-# [{years, prices, mileages, colors}]
+# [{years, prices, mileages, colors, date}]
 def extract
   db = SQLite3::Database.new DATABASE_FILE
   forum_rows = db.execute('SELECT * FROM forum')
@@ -24,6 +24,8 @@ def extract
     should_reject
   end
 
+  puts "  Filtered #{$filtered} rows"
+
   # cleanup content, remove noise
   forum_rows.map! do |*_, content|
     [*_, content.gsub(/s2000|s2k/i, '')]
@@ -37,8 +39,4 @@ def extract
     # cleanup extracted data
     postprocess datum
   end
-
-  puts "  Filtered #{$filtered} rows"
-
-  data
 end

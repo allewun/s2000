@@ -10,7 +10,7 @@ def scrape
   (1..10000).each do |i|
     puts "  Fetching page #{i}...\n"
     page = m.get(link)
-    link = page.search('li.next > a[title="Next page"]').attribute("href").text rescue nil
+    link = page.search('li.next > a[title="Next page"]').attribute('href').text rescue nil
 
     # get posts that don't contain quotes
     page.search('.//div[contains(@id, "post_id_")]/div[@class="post_wrap"][not(descendant::div[@class="quote"])]').each do |post|
@@ -20,8 +20,8 @@ def scrape
       content   = post.search('div.entry-content').xpath('descendant::text()[not(parent::p/@class="edit")]').text.strip.gsub(/\s+/, ' ')
 
       begin
-        db.execute("INSERT INTO forum (username, published, location, content)
-                    VALUES (?, ?, ?, ?)", [author, published, location, content])
+        db.execute('INSERT INTO forum (username, published, location, content)
+                    VALUES (?, ?, ?, ?)', [author, published, location, content])
       rescue SQLite3::ConstraintException => e
         # don't insert duplicate
       end

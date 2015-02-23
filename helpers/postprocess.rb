@@ -83,10 +83,20 @@ def postprocess_color color
 end
 
 
+def postprocess_date date
+  return nil if !date
+
+  p date
+
+  return nil
+end
+
+
 def postprocess datum
   datum[:year]    = postprocess_year datum[:year]
   datum[:price]   = postprocess_price datum[:price]
   datum[:mileage] = postprocess_mileage datum[:mileage]
   datum[:color]   = postprocess_color datum[:color]
+  datum[:date]    = postprocess_date datum[:date]
   datum
 end

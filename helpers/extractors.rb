@@ -38,10 +38,18 @@ def extract_color content
 end
 
 
-# {year, price, mileage}
+def extract_date content
+  /\b(201\d(?:\/|\-)\d{1,2}(?:(?:\/|\-)\d{1,2})?)\b | # british format
+   \b((?:\d{1,2}(?:\/|\-))?\d{1,2}(?:\/|\-)201\d)\b | # american format
+   ((?:jan|feb|mar|apr|may|jun|jul|aug|sept|oct|nov|dec)[a-z]*\s*(?:(?:20)1\d))\b | # month year
+   \b((?:(?:20)1\d)\s*(?:jan|feb|mar|apr|may|jun|jul|aug|sept|oct|nov|dec)[a-z]*) | # year month
+  /ix.match(content).captures.compact[0] rescue nil
+end
+
+
+# {year, price, mileage, color, date}
 def extract_content content
   # objective: get
-  #   purchase date
   #   location
   #   CR?
   #   notes
@@ -60,8 +68,12 @@ def extract_content content
   color = extract_color content
   content.sub!(color, '') if color
 
+  date = extract_date content
+  content.sub!(date, '') if date
+
   {year:    year,
    price:   price,
    mileage: mileage,
-   color:   color}
+   color:   color,
+   date:    date}
 end
