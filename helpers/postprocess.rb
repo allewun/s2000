@@ -1,14 +1,9 @@
 def process_number number
-  number.sub!(/[\.,]$/, '')
+  number.sub!(/[\.,]$/, '')     # remove trailing period/comma
+  number.sub!(/,(\d)$/, '.\1')  # non-american decimal
+  number.sub!(',', '')          # remove commas
 
-  # non-american decimal
-  number.sub!(/,(\d)$/, '.\1')
-
-  # remove commas
-  number.sub!(',', '')
-
-  # multiply by 1000
-  if number.match(/k/i)
+  if number.match(/k/i)         # multiply by 1000
     number.sub!(/k/i, '')
     number = number.to_f
     number *= 1000 if number < 1000
@@ -86,11 +81,9 @@ end
 def postprocess_date date
   return nil if !date
 
-  year = nil,
+  year = nil
   month = nil
   day = 1
-
-  month_names = %w(jan feb mar apr may jun jul aug sept oct nov dec)
 
   case date
   # british format
@@ -108,16 +101,13 @@ def postprocess_date date
     if parts.count == 2
       month, year = parts
     elsif parts.count == 3
-      # assume m/d/y first
-      month, day, year = parts
-
-      if month > 12
-        day, month, year = parts
-      end
+      month, day, year = parts                # assume mm/dd/y first
+      day, month, year = parts if month > 12  # switch to dd/mm/y if needed
     end
 
   # month year
   when /jan|feb|mar|apr|may|jun|jul|aug|sept|oct|nov|dec/i
+    month_names = %w(jan feb mar apr may jun jul aug sept oct nov dec)
     month = month_names.index { |m| date.downcase.include? m } + 1
     year = date.gsub(/\D/, '').to_i
   end

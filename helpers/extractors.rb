@@ -34,7 +34,8 @@ def extract_color content
     yellow|rio|spa|
     lime|green|
     blue|mcb|navy|suzuka|apex|montecarlo|laguna|
-    orange)/ix.match(content).captures.compact[0] rescue nil
+    orange)
+  /ix.match(content).captures.compact[0] rescue nil
 end
 
 

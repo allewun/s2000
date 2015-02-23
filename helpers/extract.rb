@@ -9,8 +9,8 @@ $filtered = 0
 
 # [{years, prices, mileages, colors, date}]
 def extract
-  db = SQLite3::Database.new DATABASE_FILE
-  forum_rows = db.execute('SELECT * FROM forum')
+  $db ||= SQLite3::Database.new DATABASE_FILE
+  forum_rows = $db.execute('SELECT * FROM forum')
 
   # filter entire rows out
   forum_rows.reject! do |*, content|
@@ -33,10 +33,7 @@ def extract
 
   # extract data from forum post content
   data = forum_rows.map do |usermame, published, location, content|
-    # extract desired values, still need to be cleaned up
-    datum = extract_content content
-
-    # cleanup extracted data
-    postprocess datum
+    datum = extract_content content  # extract desired values
+    postprocess datum                # cleanup extracted data
   end
 end
