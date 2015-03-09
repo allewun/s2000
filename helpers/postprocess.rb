@@ -48,7 +48,11 @@ def postprocess_mileage mileage
   mileage = process_number mileage
 
   # assume missed multiplier
-  mileage *= 1000 if mileage < 100
+  if mileage < 100
+    mileage *= 1000
+  elsif mileage > 300_000
+    mileage /= 10
+  end
 
   mileage.to_i
 end
